@@ -35,3 +35,15 @@ async def test_shows_form_if_searchable(db_path):
         response = await client.get("http://localhost/")
     assert 200 == response.status_code
     assert b'<form action="/-/search" method="get">' in response.content
+
+
+@pytest.mark.asyncio
+async def test_search_page(db_path):
+    sqlite_utils.Database(db_path)["creatures"].enable_fts(["name", "description"])
+    app = Datasette([db_path]).app()
+    async with httpx.AsyncClient(app=app) as client:
+        response = await client.get("http://localhost/-/search?q=dog")
+    assert 200 == response.status_code
+    content = response.content.decode("utf-8")
+    assert '<form action="/-/search" method="get">' in content
+    assert "<title>Search: dog</title>" in content

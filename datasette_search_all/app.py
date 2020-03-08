@@ -1,5 +1,5 @@
 from .utils import get_searchable_tables
-import cgi
+from urllib.parse import parse_qsl
 import json
 
 
@@ -7,7 +7,7 @@ def asgi_search_page(datasette):
     async def serve_search_page(scope, receive, send):
         assert scope["type"] == "http"
         searchable_tables = await get_searchable_tables(datasette)
-        query_params = dict(cgi.parse_qsl(scope["query_string"].decode("utf-8")))
+        query_params = dict(parse_qsl(scope["query_string"].decode("utf-8")))
         body = await datasette.render_template(
             "search_all.html",
             {
