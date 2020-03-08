@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}Search all tables{% endblock %}
+
+{% block content %}
+<h1>Search all tables</h1>
+
+{% if not searchable_tables %}
+    <p>There are no tables that have been configured for search.</p>
+{% else %}
+    <form action="/-/search" method="get">
+        <input type="search" name="q" value="{{ q }}" id="search-all-q">
+        <input type="submit" value="Search">
+    </form>
+{% endif %}
+<div id="search-all-results"></div>
+<div id="search-all-no-results"></div>
+
+<script>
+var NUM_RESULTS = 5;
+var searchable_tables = {{ searchable_tables_json|safe }};
+var q = document.getElementById("search-all-q");
+var search_results = document.getElementById("search-all-results");
+var search_no_results = document.getElementById("search-all-no-results");
+
+function htmlEscape(html) {
+  return html.replace(
+    /&/g, '&amp;'
+  ).replace(
+    />/g, '&gt;'
+  ).replace(
+    /</g, '&lt;'
+  ).replace(
+    /"/g, '&quot;'
+  ).replace(
+    /'/g, '&#039;'
+  );
+}
+
+class Safe extends String {}
+
+function safe(s) {
+  if (!(s instanceof Safe)) {
+    return new Safe(s);
+  } else {
+    return s;
+  }
+}
+
+var autoescape = (fragments, ...inserts) => safe(fragments.map(
+  (fragment, i) => {
+    var bit = fragment;
+    var insert = (inserts[i] || '');
+    if (!(insert instanceof Safe)) {
+      insert = htmlEscape(insert.toString());
+    }
+    return fragment + insert;
+  }
+).join(''));
+
+function displayResults(data) {
+    var rows = data.rows;
+    var database = data.database;
+    var table = data.table;
+    var columns = data.columns;
+    var count = data.filtered_table_rows_count;
+    var ths = safe(columns.map(c => autoescape`<th>${c}</th>`).join(""));
+    var tr_rows = safe(rows.map(row => autoescape`<tr>${safe(row.map(v => autoescape`<td>${v}</td>`).join(""))}</tr>`).join(""));
+    var view_more = '';
+    var base_url = `/${encodeURIComponent(database)}/${encodeURIComponent(table)}`;
+    var search_url = `${base_url}?_search=${encodeURIComponent(q.value)}`;
+    if (count > NUM_RESULTS) {
+        var more_count = count - NUM_RESULTS;
+        view_more = autoescape`<p><a href="${search_url}">${Number(more_count).toLocaleString()} more result${more_count == 1 ? '' : 's'}</a></p>`;
+    }
+    var html;
+    if (count) {
+        html = autoescape`
+            <h2><a href="${search_url}">${Number(count).toLocaleString()} result${count == 1 ? '' : 's'}</a> in ${database}: ${table}</h2>
+            <div style="overflow: auto">
+            <table>
+                <tr>${ths}</tr>
+                ${tr_rows}
+            </table>
+            ${view_more}
+            </div>
+        `;
+        search_results.innerHTML += html;
+    } else {
+        search_no_results.innerHTML += autoescape`
+            <p>No results in <a href="${base_url}">${database}: ${table}</a></p>
+        `;
+    }
+}
+
+if (q.value) {
+    searchable_tables.forEach(item => {
+        var database = item[0];
+        var table = item[1];
+        var url = `/${encodeURIComponent(database)}/${encodeURIComponent(table)}.json?_size=${NUM_RESULTS}&_search=${encodeURIComponent(q.value)}`;
+        fetch(url).then(r => r.json()).then(displayResults);
+    });
+}
+</script>
+
+
+{% endblock %}
