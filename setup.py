@@ -25,6 +25,6 @@ setup(
     entry_points={"datasette": ["search_all = datasette_search_all"]},
     package_data={"datasette_search_all": ["templates/*.html"]},
     install_requires=["datasette"],
-    extras_require={"test": ["pytest", "pytest-asyncio", "httpx"]},
+    extras_require={"test": ["pytest", "pytest-asyncio", "httpx", "sqlite-utils"]},
     tests_require=["datasette-search-all[test]"],
 )
