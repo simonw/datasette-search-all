@@ -1,21 +1,13 @@
 from starlette.responses import HTMLResponse
 from starlette.endpoints import HTTPEndpoint
+from .utils import get_searchable_tables
 import json
 
 
 class SearchAll(HTTPEndpoint):
     async def get(self, request):
-        searchable_tables = []
-        for db_name, database in self.datasette.databases.items():
-            hidden_tables = set(await database.hidden_table_names())
-            for table in await database.table_names():
-                if table in hidden_tables:
-                    continue
-                fts_table = await database.fts_table(table)
-                if fts_table:
-                    searchable_tables.append((db_name, table))
+        searchable_tables = await get_searchable_tables(self.datasette)
 
-        print(json.dumps(searchable_tables))
         return HTMLResponse(
             await self.datasette.render_template(
                 "search_all.html", {

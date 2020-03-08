@@ -1,5 +1,17 @@
 from datasette import hookimpl
 from .app import SearchAll
+from .utils import get_searchable_tables
+
+
+@hookimpl
+def extra_template_vars(template, datasette):
+    if template != "index.html":
+        return
+    # Add list of searchable tables
+    async def inner():
+        searchable_tables = await get_searchable_tables(datasette)
+        return {"searchable_tables": searchable_tables}
+    return inner
 
 
 @hookimpl
