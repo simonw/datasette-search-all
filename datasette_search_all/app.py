@@ -10,10 +10,11 @@ class SearchAll(HTTPEndpoint):
 
         return HTMLResponse(
             await self.datasette.render_template(
-                "search_all.html", {
+                "search_all.html",
+                {
                     "q": request.query_params.get("q") or "",
                     "searchable_tables": searchable_tables,
                     "searchable_tables_json": json.dumps(searchable_tables),
-                }
+                },
             )
         )

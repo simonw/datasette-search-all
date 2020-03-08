@@ -11,6 +11,7 @@ def extra_template_vars(template, datasette):
     async def inner():
         searchable_tables = await get_searchable_tables(datasette)
         return {"searchable_tables": searchable_tables}
+
     return inner
 
 
