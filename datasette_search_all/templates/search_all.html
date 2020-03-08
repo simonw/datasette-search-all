@@ -57,6 +57,15 @@ var autoescape = (fragments, ...inserts) => safe(fragments.map(
   }
 ).join(''));
 
+function displayCell(cell) {
+    // cell is either a value or a {"value:", "label": } object
+    if (cell && typeof(cell.label) !== "undefined") {
+        return cell.label || cell.value;
+    } else {
+        return cell;
+    }
+}
+
 function displayResults(data) {
     var rows = data.rows;
     var database = data.database;
@@ -64,7 +73,7 @@ function displayResults(data) {
     var columns = data.columns;
     var count = data.filtered_table_rows_count;
     var ths = safe(columns.map(c => autoescape`<th>${c}</th>`).join(""));
-    var tr_rows = safe(rows.map(row => autoescape`<tr>${safe(row.map(v => autoescape`<td>${v}</td>`).join(""))}</tr>`).join(""));
+    var tr_rows = safe(rows.map(row => autoescape`<tr>${safe(columns.map(column => autoescape`<td>${displayCell(row[column])}</td>`).join(""))}</tr>`).join(""));
     var view_more = '';
     var base_url = `/${encodeURIComponent(database)}/${encodeURIComponent(table)}`;
     var search_url = `${base_url}?_search=${encodeURIComponent(q.value)}`;
@@ -96,7 +105,7 @@ if (q.value) {
     searchable_tables.forEach(item => {
         var database = item[0];
         var table = item[1];
-        var url = `/${encodeURIComponent(database)}/${encodeURIComponent(table)}.json?_size=${NUM_RESULTS}&_search=${encodeURIComponent(q.value)}`;
+        var url = `/${encodeURIComponent(database)}/${encodeURIComponent(table)}.json?_shape=objects&_labels=on&_size=${NUM_RESULTS}&_search=${encodeURIComponent(q.value)}`;
         fetch(url).then(r => r.json()).then(displayResults);
     });
 }
