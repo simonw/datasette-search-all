@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Search all tables{% endblock %}
+{% block title %}Search{% if q %}: {{ q }}{% else %} all tables{% endif %}{% endblock %}
 
 {% block nav %}
     <p class="crumbs">
