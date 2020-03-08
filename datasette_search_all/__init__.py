@@ -1,5 +1,5 @@
 from datasette import hookimpl
-from .app import SearchAll
+from .app import asgi_search_page
 from .utils import get_searchable_tables
 
 
@@ -17,13 +17,11 @@ def extra_template_vars(template, datasette):
 
 @hookimpl
 def asgi_wrapper(datasette):
-    SearchAll.datasette = datasette
-
     def wrap_with_app(app):
         async def wrapped_app(scope, receive, send):
             path = scope["path"]
             if path == "/-/search":
-                await SearchAll(scope, receive, send)
+                await asgi_search_page(datasette)(scope, receive, send)
             else:
                 await app(scope, receive, send)
 
