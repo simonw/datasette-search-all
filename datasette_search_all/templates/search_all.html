@@ -19,7 +19,15 @@
         <input type="submit" value="Search">
     </form>
 {% endif %}
-<div id="search-all-results"></div>
+<div id="search-all-results">
+{% if q and searchable_tables %}
+    <ul>
+    {% for searchable_table in searchable_tables %}
+        <li><a href="/{{ searchable_table.0|quote_plus }}/{{ searchable_table.1|quote_plus }}?_search={{ q|urlencode }}">Search {{ searchable_table.0 }}: {{ searchable_table.1 }} for "{{ q }}"</a></li>
+    {% endfor %}
+    </ul>
+{% endif %}
+</div>
 <div id="search-all-no-results"></div>
 
 <script>
@@ -27,6 +35,7 @@ var NUM_RESULTS = 5;
 var searchable_tables = {{ searchable_tables_json|safe }};
 var q = document.getElementById("search-all-q");
 var search_results = document.getElementById("search-all-results");
+search_results.innerHTML = '';
 var search_no_results = document.getElementById("search-all-no-results");
 
 function htmlEscape(html) {

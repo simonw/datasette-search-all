@@ -47,3 +47,4 @@ async def test_search_page(db_path):
     content = response.content.decode("utf-8")
     assert '<form action="/-/search" method="get">' in content
     assert "<title>Search: dog</title>" in content
+    assert '<li><a href="/data/creatures?_search=dog">Search data: creatures for "dog"</a></li>' in content
