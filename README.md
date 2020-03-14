@@ -12,6 +12,10 @@ Install the plugin in the same Python environment as Datasette:
 
     pip install datasette-search-all
 
+## Background
+
+See [datasette-search-all: a new plugin for searching multiple Datasette tables at once](https://simonwillison.net/2020/Mar/9/datasette-search-all/) for background on this project. You can try the plugin out at https://fara.datasettes.com/
+
 ## Usage
 
 This plugin only works if at least one of the tables connected to your Datasette instance has been configured for SQLite's full-text search.
@@ -26,3 +30,7 @@ You can also use the following tools:
 If the plugin detects at least one searchable table it will add a search form to the homepage.
 
 You can also navigate to `/-/search` on your Datasette instance to use the search interface directly.
+
+## Screenshot
+
+![Animated screenshot showing the plugin in action](https://raw.githubusercontent.com/simonw/datasette-search-all/master/animated-screenshot.gif)
