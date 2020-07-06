@@ -1,7 +1,7 @@
 import os
 from setuptools import setup
 
-VERSION = "0.2.1"
+VERSION = "0.3"
 
 
 def get_long_description():
@@ -24,7 +24,7 @@ setup(
     packages=["datasette_search_all"],
     entry_points={"datasette": ["search_all = datasette_search_all"]},
     package_data={"datasette_search_all": ["templates/*.html"]},
-    install_requires=["datasette>=0.45"],
+    install_requires=["datasette>=0.44"],
     extras_require={"test": ["pytest", "pytest-asyncio", "httpx", "sqlite-utils"]},
     tests_require=["datasette-search-all[test]"],
 )
