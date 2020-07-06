@@ -1,6 +1,21 @@
 from datasette import hookimpl
-from .app import asgi_search_page
+from datasette.utils.asgi import Response
 from .utils import get_searchable_tables
+import json
+
+
+async def search_all(datasette, request):
+    searchable_tables = await get_searchable_tables(datasette)
+    return Response.html(
+        await datasette.render_template(
+            "search_all.html",
+            {
+                "q": request.args.get("q") or "",
+                "searchable_tables": searchable_tables,
+                "searchable_tables_json": json.dumps(searchable_tables),
+            },
+        )
+    )
 
 
 @hookimpl
@@ -16,15 +31,7 @@ def extra_template_vars(template, datasette):
 
 
 @hookimpl
-def asgi_wrapper(datasette):
-    def wrap_with_app(app):
-        async def wrapped_app(scope, receive, send):
-            path = scope["path"]
-            if path == "/-/search":
-                await asgi_search_page(datasette)(scope, receive, send)
-            else:
-                await app(scope, receive, send)
-
-        return wrapped_app
-
-    return wrap_with_app
+def register_routes():
+    return [
+        ("/-/search", search_all),
+    ]
