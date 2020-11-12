@@ -1,6 +1,33 @@
 {% extends "base.html" %}
 {% block title %}Search{% if q %}: {{ q }}{% else %} all tables{% endif %}{% endblock %}
 
+{% block extra_head %}
+<style type="text/css">
+.search-all-loading a {
+    padding-left: 0.5em;
+}
+.search-all-loading:before {
+    content: " ";
+    opacity: 0.5;
+    display: inline-block;
+    width: 0.4em;
+    height: 0.4em;
+    border-radius: 50%;
+    border: 4px solid black;
+    border-color: black transparent black transparent;
+    animation: rotate-360 1.2s linear infinite;
+}
+@keyframes rotate-360 {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+</style>
+{% endblock %}
+
 {% block nav %}
     <p class="crumbs">
         <a href="{{ urls.instance() }}">home</a>
@@ -19,11 +46,11 @@
         <input type="submit" value="Search">
     </form>
 {% endif %}
-<div id="search-all-results">
+<div id="search-all-results" style="margin-top: 1em;">
 {% if q and searchable_tables %}
     <ul>
     {% for searchable_table in searchable_tables %}
-        <li><a href="{{ searchable_table.url }}?_search={{ q|urlencode }}">Search {{ searchable_table.database }}: {{ searchable_table.table }} for "{{ q }}"</a></li>
+        <li data-searchable-url="{{ searchable_table.url }}"><a href="{{ searchable_table.url }}?_search={{ q|urlencode }}">Search {{ searchable_table.database }}: {{ searchable_table.table }} for "{{ q }}"</a></li>
     {% endfor %}
     </ul>
 {% endif %}
@@ -35,7 +62,6 @@ var NUM_RESULTS = 5;
 var searchable_tables = {{ searchable_tables_json|safe }};
 var q = document.getElementById("search-all-q");
 var search_results = document.getElementById("search-all-results");
-search_results.innerHTML = '';
 var search_no_results = document.getElementById("search-all-no-results");
 
 function isUrl(s) {
@@ -112,7 +138,7 @@ function displayResults(data, base_url) {
         var more_count = count - NUM_RESULTS;
         view_more = autoescape`<p><a href="${search_url}">${Number(more_count).toLocaleString()} more result${more_count == 1 ? '' : 's'}</a></p>`;
     }
-    var html;
+    var html, div;
     if (count) {
         html = autoescape`
             <h2><a href="${search_url}">${Number(count).toLocaleString()} result${count == 1 ? '' : 's'}</a> in ${database}: ${table}</h2>
@@ -124,7 +150,9 @@ function displayResults(data, base_url) {
             ${view_more}
             </div>
         `;
-        search_results.innerHTML += html;
+        div = document.createElement('div');
+        div.innerHTML = html;
+        search_results.appendChild(div);
     } else {
         search_no_results.innerHTML += autoescape`
             <p>No results in <a href="${base_url}">${database}: ${table}</a></p>
@@ -135,8 +163,11 @@ function displayResults(data, base_url) {
 if (q.value) {
     searchable_tables.forEach(item => {
         var base_url = item.url;
+        var li = document.querySelector(`[data-searchable-url="${base_url}"]`);
+        li.classList.add('search-all-loading');
         var json_url = `${item.url_json}?_shape=objects&_labels=on&_size=${NUM_RESULTS}&_search=${encodeURIComponent(q.value)}`;
         fetch(json_url).then(r => r.json()).then((data) => {
+            li.style.display = 'none';
             displayResults(data, base_url);
         });
     });
