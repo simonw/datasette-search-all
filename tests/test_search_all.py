@@ -22,7 +22,15 @@ async def test_no_form_on_index_if_not_searchable(db_path):
     datasette = Datasette([db_path])
     response = await datasette.client.get("/")
     assert 200 == response.status_code
-    assert b'<form action="/-/search" method="get">' not in response.content
+    assert '<form action="/-/search" method="get">' not in response.text
+
+
+@pytest.mark.asyncio
+async def test_no_nav_menu_if_not_searchable(db_path):
+    datasette = Datasette([db_path])
+    response = await datasette.client.get("/")
+    assert 200 == response.status_code
+    assert '<details class="nav-menu">' not in response.text
 
 
 @pytest.mark.asyncio
@@ -31,7 +39,16 @@ async def test_shows_form_if_searchable(db_path):
     datasette = Datasette([db_path])
     response = await datasette.client.get("/")
     assert 200 == response.status_code
-    assert b'<form action="/-/search" method="get">' in response.content
+    assert '<form action="/-/search" method="get">' in response.text
+
+
+@pytest.mark.asyncio
+async def test_shows_nav_menu_if_searchable(db_path):
+    sqlite_utils.Database(db_path)["creatures"].enable_fts(["name", "description"])
+    datasette = Datasette([db_path])
+    response = await datasette.client.get("/")
+    assert 200 == response.status_code
+    assert '<details class="nav-menu">' in response.text
 
 
 @pytest.mark.asyncio
@@ -40,7 +57,7 @@ async def test_search_page(db_path):
     datasette = Datasette([db_path])
     response = await datasette.client.get("/-/search?q=dog")
     assert 200 == response.status_code
-    content = response.content.decode("utf-8")
+    content = response.text
     assert '<form action="/-/search" method="get">' in content
     assert "<title>Search: dog</title>" in content
     assert (
