@@ -14,7 +14,7 @@
 {% if not searchable_tables %}
     <p>There are no tables that have been configured for search.</p>
 {% else %}
-    <form action="/-/search" method="get">
+    <form action="{{ urls.path("/-/search") }}" method="get">
         <input type="search" name="q" value="{{ q }}" id="search-all-q">
         <input type="submit" value="Search">
     </form>

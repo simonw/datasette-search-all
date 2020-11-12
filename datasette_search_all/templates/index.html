@@ -2,7 +2,7 @@
 
 {% block description_source_license %}
 {% if searchable_tables %}
-    <form action="/-/search" method="get">
+    <form action="{{ urls.path("/-/search") }}" method="get">
         <input type="search" name="q" value="{{ q }}" placeholder="Search for records across {{ searchable_tables|length }} table{% if searchable_tables|length > 1 %}s{% endif %}" id="search-all-q">
         <input type="submit" value="Search">
     </form>
