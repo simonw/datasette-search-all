@@ -1,7 +1,8 @@
 # datasette-search-all
 
 [![PyPI](https://img.shields.io/pypi/v/datasette-search-all.svg)](https://pypi.org/project/datasette-search-all/)
-[![CircleCI](https://circleci.com/gh/simonw/datasette-search-all.svg?style=svg)](https://circleci.com/gh/simonw/datasette-search-all)
+[![Changelog](https://img.shields.io/github/v/release/simonw/datasette-search-all?include_prereleases&label=changelog)](https://github.com/simonw/datasette-search-all/releases)
+[![Tests](https://github.com/simonw/datasette-search-all/workflows/Test/badge.svg)](https://github.com/simonw/datasette-search-all/actions?query=workflow%3ATest)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/simonw/datasette-search-all/blob/main/LICENSE)
 
 Datasette plugin for searching all searchable tables at once.

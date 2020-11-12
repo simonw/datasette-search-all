@@ -19,6 +19,11 @@ setup(
     long_description_content_type="text/markdown",
     author="Simon Willison",
     url="https://github.com/simonw/datasette-search-all",
+    project_urls={
+        "Issues": "https://github.com/simonw/datasette-search-all/issues",
+        "CI": "https://github.com/simonw/datasette-search-all/actions",
+        "Changelog": "https://github.com/simonw/datasette-search-all/releases",
+    },
     license="Apache License, Version 2.0",
     version=VERSION,
     packages=["datasette_search_all"],
