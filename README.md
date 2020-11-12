@@ -2,7 +2,7 @@
 
 [![PyPI](https://img.shields.io/pypi/v/datasette-search-all.svg)](https://pypi.org/project/datasette-search-all/)
 [![CircleCI](https://circleci.com/gh/simonw/datasette-search-all.svg?style=svg)](https://circleci.com/gh/simonw/datasette-search-all)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/simonw/datasette-search-all/blob/master/LICENSE)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/simonw/datasette-search-all/blob/main/LICENSE)
 
 Datasette plugin for searching all searchable tables at once.
 
@@ -33,4 +33,4 @@ You can also navigate to `/-/search` on your Datasette instance to use the searc
 
 ## Screenshot
 
-![Animated screenshot showing the plugin in action](https://raw.githubusercontent.com/simonw/datasette-search-all/master/animated-screenshot.gif)
+![Animated screenshot showing the plugin in action](https://raw.githubusercontent.com/simonw/datasette-search-all/main/animated-screenshot.gif)
