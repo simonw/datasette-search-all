@@ -61,9 +61,10 @@ async def test_search_page(db_path):
     assert '<form action="/-/search" method="get">' in content
     assert "<title>Search: dog</title>" in content
     assert (
-        '<li><a href="/data/creatures?_search=dog">Search data: creatures for "dog"</a></li>'
-        in content
-    )
+        '<li data-searchable-url="/data/creatures">'
+        '<a href="/data/creatures?_search=dog">'
+        'Search data: creatures for "dog"</a></li>'
+    ) in content
 
 
 @pytest.mark.asyncio
