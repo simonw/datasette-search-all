@@ -34,7 +34,7 @@ async def test_no_nav_menu_if_not_searchable(db_path):
 
 
 @pytest.mark.asyncio
-async def test_shows_form_if_searchable(db_path):
+async def test_shows_form_on_index_if_searchable(db_path):
     sqlite_utils.Database(db_path)["creatures"].enable_fts(["name", "description"])
     datasette = Datasette([db_path])
     response = await datasette.client.get("/")

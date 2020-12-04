@@ -42,8 +42,10 @@
     <p>There are no tables that have been configured for search.</p>
 {% else %}
     <form action="{{ urls.path("/-/search") }}" method="get">
-        <input type="search" name="q" value="{{ q }}" id="search-all-q">
-        <input type="submit" value="Search">
+        <p>
+            <input type="search" name="q" value="{{ q }}" id="search-all-q">
+            <input type="submit" value="Search">
+        </p>
     </form>
 {% endif %}
 <div id="search-all-results" style="margin-top: 1em;">
