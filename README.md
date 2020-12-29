@@ -21,11 +21,11 @@ See [datasette-search-all: a new plugin for searching multiple Datasette tables 
 
 This plugin only works if at least one of the tables connected to your Datasette instance has been configured for SQLite's full-text search.
 
-The [Datasette search documentation](https://datasette.readthedocs.io/en/stable/full_text_search.html) includes details on how to enable full-text search for a table.
+The [Datasette search documentation](https://docs.datasette.io/en/stable/full_text_search.html) includes details on how to enable full-text search for a table.
 
 You can also use the following tools:
 
-* [sqlite-utils](https://sqlite-utils.readthedocs.io/en/stable/cli.html#configuring-full-text-search) includes a command-line tool for enabling full-text search.
+* [sqlite-utils](https://sqlite-utils.datasette.io/en/stable/cli.html#configuring-full-text-search) includes a command-line tool for enabling full-text search.
 * [datasette-enable-fts](https://github.com/simonw/datasette-enable-fts) is a Datasette plugin that adds a web interface for enabling search for specific columns.
 
 If the plugin detects at least one searchable table it will add a search form to the homepage.
