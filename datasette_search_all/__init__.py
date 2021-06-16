@@ -5,9 +5,9 @@ import json
 
 
 @hookimpl
-def menu_links(datasette):
+def menu_links(datasette, actor):
     async def inner():
-        if await has_searchable_tables(datasette):
+        if await has_searchable_tables(datasette, actor):
             return [
                 {"href": datasette.urls.path("/-/search"), "label": "Search all tables"}
             ]
@@ -16,7 +16,7 @@ def menu_links(datasette):
 
 
 async def search_all(datasette, request):
-    searchable_tables = list(await get_searchable_tables(datasette))
+    searchable_tables = list(await get_searchable_tables(datasette, request.actor))
     tables = [
         {
             "database": database,
@@ -39,12 +39,14 @@ async def search_all(datasette, request):
 
 
 @hookimpl
-def extra_template_vars(template, datasette):
+def extra_template_vars(template, request, datasette):
     if template != "index.html":
         return
     # Add list of searchable tables
     async def inner():
-        searchable_tables = list(await get_searchable_tables(datasette))
+        if not await has_searchable_tables(datasette, request.actor):
+            return {"searchable_tables": []}
+        searchable_tables = list(await get_searchable_tables(datasette, request.actor))
         return {"searchable_tables": searchable_tables}
 
     return inner
