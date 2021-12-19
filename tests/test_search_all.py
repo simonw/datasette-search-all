@@ -71,7 +71,7 @@ async def test_search_page(db_path):
 @pytest.mark.parametrize("path", ["/", "/-/search"])
 async def test_base_url(db_path, path):
     sqlite_utils.Database(db_path)["creatures"].enable_fts(["name", "description"])
-    datasette = Datasette([db_path], config={"base_url": "/foo/"})
+    datasette = Datasette([db_path], settings={"base_url": "/foo/"})
     response = await datasette.client.get(path)
     assert response.status_code == 200
     assert '<a href="/foo/-/search">' in response.text
