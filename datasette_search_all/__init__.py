@@ -5,9 +5,11 @@ import json
 
 
 @hookimpl
-def menu_links(datasette):
+def menu_links(datasette, request):
     async def inner():
-        if await has_searchable_tables(datasette):
+        if not request:
+            return None
+        if await has_searchable_tables(datasette, request):
             return [
                 {"href": datasette.urls.path("/-/search"), "label": "Search all tables"}
             ]
@@ -16,7 +18,7 @@ def menu_links(datasette):
 
 
 async def search_all(datasette, request):
-    searchable_tables = list(await get_searchable_tables(datasette))
+    searchable_tables = list(await get_searchable_tables(datasette, request))
     tables = [
         {
             "database": database,
@@ -34,17 +36,18 @@ async def search_all(datasette, request):
                 "searchable_tables": tables,
                 "searchable_tables_json": json.dumps(tables, indent=4),
             },
+            request=request,
         )
     )
 
 
 @hookimpl
-def extra_template_vars(template, datasette):
+def extra_template_vars(template, datasette, request):
     if template != "index.html":
         return
     # Add list of searchable tables
     async def inner():
-        searchable_tables = list(await get_searchable_tables(datasette))
+        searchable_tables = list(await get_searchable_tables(datasette, request))
         return {"searchable_tables": searchable_tables}
 
     return inner

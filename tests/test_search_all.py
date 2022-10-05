@@ -2,6 +2,7 @@ import datasette
 from datasette.app import Datasette
 import sqlite_utils
 import pytest
+import json
 
 
 @pytest.fixture
@@ -76,3 +77,41 @@ async def test_base_url(db_path, path):
     assert response.status_code == 200
     assert '<a href="/foo/-/search">' in response.text
     assert 'action="/foo/-/search"' in response.text
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "metadata,expected_tables",
+    (
+        ({}, ["creatures", "other"]),
+        ({"allow": False}, []),
+        (
+            {"allow": False, "databases": {"data": {"allow": True}}},
+            ["creatures", "other"],
+        ),
+        (
+            {
+                "allow": False,
+                "databases": {"data": {"tables": {"creatures": {"allow": True}}}},
+            },
+            ["creatures"],
+        ),
+    ),
+)
+async def test_table_permissions(db_path, metadata, expected_tables):
+    db = sqlite_utils.Database(db_path)
+    db["creatures"].enable_fts(["name", "description"])
+    db["other"].insert({"name": "name here"})
+    db["other"].enable_fts(["name"])
+    datasette = Datasette([db_path], metadata=metadata)
+    response = await datasette.client.get("/-/search")
+    menu_fragment = '<li><a href="/-/search">Search all tables</a></li>'
+    if expected_tables:
+        # Nav menu option should be present
+        assert menu_fragment in response.text
+    else:
+        assert menu_fragment not in response.text
+    # searchable_tables JSON should match expected
+    encoded = response.text.split("var searchable_tables = ")[1].split(";")[0]
+    searchable_tables = json.loads(encoded)
+    assert [t["table"] for t in searchable_tables] == expected_tables
