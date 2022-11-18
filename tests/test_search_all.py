@@ -66,6 +66,10 @@ async def test_search_page(db_path):
         '<a href="/data/creatures?_search=dog">'
         'Search data: creatures for "dog"</a></li>'
     ) in content
+    # Should only have one set of breadcrumbs
+    # https://github.com/simonw/datasette/issues/1901
+    assert content.count('<p class="crumbs">') == 1
+    assert content.count('<a href="/">home</a>') == 1
 
 
 @pytest.mark.asyncio
