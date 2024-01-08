@@ -21,7 +21,17 @@ def db_path(tmpdir):
 
 
 @pytest.fixture
-def ds_server(db_path):
+def db_path_searchable(db_path):
+    sqlite_utils.Database(db_path)["creatures"].enable_fts(["name", "description"])
+    # Copy to /tmp
+    import shutil
+
+    shutil.copyfile(str(db_path), "/tmp/data.db")
+    return db_path
+
+
+@pytest.fixture
+def ds_server(db_path_searchable):
     process = Popen(
         [
             sys.executable,
@@ -29,7 +39,7 @@ def ds_server(db_path):
             "datasette",
             "--port",
             "8126",
-            str(db_path),
+            str(db_path_searchable),
         ],
         stdout=PIPE,
     )
