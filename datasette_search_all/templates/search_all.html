@@ -96,7 +96,6 @@ function safe(s) {
 
 var autoescape = (fragments, ...inserts) => safe(fragments.map(
   (fragment, i) => {
-    var bit = fragment;
     var insert = (inserts[i] || '');
     if (!(insert instanceof Safe)) {
       insert = htmlEscape(insert.toString());
