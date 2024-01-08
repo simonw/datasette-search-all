@@ -122,8 +122,11 @@ function displayResults(data, base_url) {
     var rows = data.rows;
     var database = data.database;
     var table = data.table;
-    var columns = data.columns;
-    var count = data.filtered_table_rows_count;
+    var columns = [];
+    if (data.rows.length) {
+        columns = Object.keys(data.rows[0]);
+    }
+    var count = data.filtered_table_rows_count || data.count;
     var ths = safe(columns.map(c => autoescape`<th>${c}</th>`).join(""));
     var tr_rows = safe(rows.map(row => autoescape`<tr>${safe(columns.map(column => autoescape`<td>${displayCell(row[column])}</td>`).join(""))}</tr>`).join(""));
     var view_more = '';
@@ -159,7 +162,7 @@ if (q.value) {
         var base_url = item.url;
         var li = document.querySelector(`[data-searchable-url="${base_url}"]`);
         li.classList.add('search-all-loading');
-        var json_url = `${item.url_json}?_shape=objects&_labels=on&_size=${NUM_RESULTS}&_search=${encodeURIComponent(q.value)}`;
+        var json_url = `${item.url_json}?_shape=objects&_labels=on&_extra=count&_extra=database&_extra=table&_size=${NUM_RESULTS}&_search=${encodeURIComponent(q.value)}`;
         fetch(json_url).then(r => r.json()).then((data) => {
             li.style.display = 'none';
             displayResults(data, base_url);
