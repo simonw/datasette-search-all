@@ -35,3 +35,29 @@ You can also navigate to `/-/search` on your Datasette instance to use the searc
 ## Screenshot
 
 ![Animated screenshot showing the plugin in action](https://raw.githubusercontent.com/simonw/datasette-search-all/main/animated-screenshot.gif)
+
+## Development
+
+To set up this plugin locally, first checkout the code. Then create a new virtual environment:
+```bash
+cd datasette-search-all
+python -m venv venv
+source venv/bin/activate
+```
+Or if you are using `pipenv`:
+```bash
+pipenv shell
+```
+Now install the dependencies and tests:
+```bash
+pip install -e '.[test]'
+```
+To run the tests:
+```bash
+pytest
+```
+To run the browser automation tests:
+```bash
+pip install -e '.[test,playwright]'
+pytest
+```

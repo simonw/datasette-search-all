@@ -45,6 +45,7 @@ async def search_all(datasette, request):
 def extra_template_vars(template, datasette, request):
     if template != "index.html":
         return
+
     # Add list of searchable tables
     async def inner():
         searchable_tables = list(await get_searchable_tables(datasette, request))
