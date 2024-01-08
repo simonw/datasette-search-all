@@ -49,7 +49,11 @@ async def test_shows_nav_menu_if_searchable(db_path):
     datasette = Datasette([db_path])
     response = await datasette.client.get("/")
     assert response.status_code == 200
-    assert '<details class="nav-menu">' in response.text
+    for fragment in (
+        '<details class="nav-menu',
+        '"/-/search">Search all tables</a>'
+    ):
+        assert fragment in response.text
 
 
 @pytest.mark.asyncio
