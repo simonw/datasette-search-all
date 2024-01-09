@@ -7,31 +7,36 @@ import time
 import httpx
 
 
-@pytest.fixture
-def db_path(tmpdir):
-    path = str(tmpdir / "data.db")
-    db = sqlite_utils.Database(path)
+def populate_db(db, search=False):
     db["creatures"].insert_all(
         [
             {"name": "Cleo", "description": "A medium sized dog"},
             {"name": "Siroco", "description": "A troublesome Kakapo"},
         ]
     )
+    if search:
+        db["creatures"].enable_fts(["name", "description"])
+
+
+@pytest.fixture
+def db_path(tmpdir):
+    path = str(tmpdir / "data.db")
+    db = sqlite_utils.Database(path)
+    populate_db(db)
     return path
 
 
 @pytest.fixture
 def db_path_searchable(db_path):
     sqlite_utils.Database(db_path)["creatures"].enable_fts(["name", "description"])
-    # Copy to /tmp
-    import shutil
-
-    shutil.copyfile(str(db_path), "/tmp/data.db")
     return db_path
 
 
-@pytest.fixture
-def ds_server(db_path_searchable):
+@pytest.fixture(scope="session")
+def ds_server(tmp_path_factory):
+    db_path = str(tmp_path_factory.mktemp("data") / "data.db")
+    db = sqlite_utils.Database(db_path)
+    populate_db(db, search=True)
     process = Popen(
         [
             sys.executable,
@@ -39,7 +44,7 @@ def ds_server(db_path_searchable):
             "datasette",
             "--port",
             "8126",
-            str(db_path_searchable),
+            str(db_path),
         ],
         stdout=PIPE,
     )
