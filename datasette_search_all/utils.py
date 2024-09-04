@@ -7,6 +7,8 @@ async def iterate_searchable_tables(datasette, request):
         for table in await database.table_names():
             if table in hidden_tables:
                 continue
+            if table.endswith("_fts"):
+                continue
             fts_table = await database.fts_table(table)
             if fts_table:
                 # Check user has permission to view that table
