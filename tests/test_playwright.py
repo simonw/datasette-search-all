@@ -17,15 +17,32 @@ def test_ds_server(ds_server, page):
     assert page.query_selector('form[action="/-/search"]')
 
 
+table_js = """
+function tableToJson() {
+    const tables = document.querySelectorAll('table');
+    return Array.from(tables).map(table => {
+        const headers = Array.from(table.querySelectorAll('th')).map(th => th.textContent.trim());
+        const rows = Array.from(table.querySelectorAll('tr')).slice(1).map(tr => {
+            const cells = Array.from(tr.querySelectorAll('td, th')).map(cell => cell.textContent.trim());
+            return cells;
+        });
+        return {
+            headers: headers,
+            rows: rows
+        };
+    });
+}
+"""
+
+
 def test_search(ds_server, page):
     page.goto(ds_server + "/-/search?q=cleo")
     # Should show search results, after fetching them
-    assert page.locator("table tr th:nth-child(1)").inner_text() == "rowid"
-    assert page.locator("table tr th:nth-child(2)").inner_text() == "name"
-    assert page.locator("table tr th:nth-child(3)").inner_text() == "description"
-    assert page.locator("table tr:nth-child(2) td:nth-child(1)").inner_text() == "1"
-    assert page.locator("table tr:nth-child(2) td:nth-child(2)").inner_text() == "Cleo"
-    assert (
-        page.locator("table tr:nth-child(2) td:nth-child(3)").inner_text()
-        == "A medium sized dog"
-    )
+    page.wait_for_selector("table")
+    table = page.evaluate(table_js)
+    assert table == [
+        {
+            "headers": ["rowid", "name", "description"],
+            "rows": [["1", "Cleo", "A medium sized dog"]],
+        },
+    ]
