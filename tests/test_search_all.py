@@ -10,7 +10,7 @@ async def test_no_form_on_index_if_not_searchable(db_path):
     datasette = Datasette([db_path])
     response = await datasette.client.get("/")
     assert response.status_code == 200
-    assert '<form action="/-/search" method="get">' not in response.text
+    assert '<form class="core" action="/-/search" method="get">' not in response.text
 
 
 @pytest.mark.asyncio
@@ -27,7 +27,7 @@ async def test_shows_form_on_index_if_searchable(db_path):
     datasette = Datasette([db_path])
     response = await datasette.client.get("/")
     assert response.status_code == 200
-    assert '<form action="/-/search" method="get">' in response.text
+    assert '<form class="core" action="/-/search" method="get">' in response.text
 
 
 @pytest.mark.asyncio
@@ -47,7 +47,7 @@ async def test_search_page(db_path):
     response = await datasette.client.get("/-/search?q=dog")
     assert response.status_code == 200
     content = response.text
-    assert '<form action="/-/search" method="get">' in content
+    assert '<form class="core" action="/-/search" method="get">' in content
     assert "<title>Search: dog</title>" in content
     assert (
         '<li data-searchable-url="/data/creatures">'
