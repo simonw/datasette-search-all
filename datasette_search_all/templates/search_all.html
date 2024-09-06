@@ -140,7 +140,7 @@ function displayResults(data, base_url) {
         html = autoescape`
             <h2><a href="${search_url}">${Number(count).toLocaleString()} result${count == 1 ? '' : 's'}</a> in ${database}: ${table}</h2>
             <div style="overflow: auto">
-            <table>
+            <table class="rows-and-columns">
                 <tr>${ths}</tr>
                 ${tr_rows}
             </table>
