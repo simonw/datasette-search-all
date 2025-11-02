@@ -1,4 +1,5 @@
 from datasette import Forbidden
+from datasette.resources import TableResource
 
 
 async def iterate_searchable_tables(datasette, request):
@@ -13,13 +14,10 @@ async def iterate_searchable_tables(datasette, request):
             if fts_table:
                 # Check user has permission to view that table
                 try:
-                    await datasette.ensure_permissions(
-                        request.actor,
-                        [
-                            ("view-table", (database.name, table)),
-                            ("view-database", database.name),
-                            "view-instance",
-                        ],
+                    await datasette.ensure_permission(
+                        action="view-table",
+                        resource=TableResource(database=database.name, table=table),
+                        actor=request.actor,
                     )
                     yield (db_name, table)
                 except Forbidden:
