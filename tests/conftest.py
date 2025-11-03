@@ -64,3 +64,18 @@ def wait_until_responds(url, timeout=5.0, **kwargs):
         except httpx.ConnectError:
             time.sleep(0.1)
     raise AssertionError("Timed out waiting for {} to respond".format(url))
+
+
+@pytest.fixture
+def page():
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:  # pragma: no cover - handled by pytest skip marker
+        pytest.skip("playwright not installed")
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch()
+        page = browser.new_page()
+        try:
+            yield page
+        finally:
+            browser.close()
