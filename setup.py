@@ -32,7 +32,7 @@ setup(
     install_requires=["datasette>=1.0a20"],
     python_requires=">=3.10",
     extras_require={
-        "test": ["pytest", "pytest-asyncio", "sqlite-utils", "nest-asyncio"],
+        "test": ["pytest", "pytest-asyncio", "sqlite-utils"],
         "playwright": ["pytest-playwright"]
     },
 )
